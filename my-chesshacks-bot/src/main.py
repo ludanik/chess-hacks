@@ -39,21 +39,30 @@ def test_func(ctx: GameContext):
     probs = model.get_move_from_fen_no_thinking(fen, T=1, device=device, return_probs=True)
     top_moves = sorted(probs.items(), key=lambda x: x[1], reverse=True)[:5]
     '''
+    
+    '''
+    move_probs = top_moves
+    print("my model")
+    print(move_probs)
+    print(probs)
+    print(top_moves)
+    ctx.logProbabilities(move_probs)
+
     move_weights = [random.random() for _ in legal_moves]
     total_weight = sum(move_weights)
     # Normalize so probabilities sum to 1
     move_probs = {
-        move: weight / total_weight
-        for move, weight in zip(legal_moves, move_weights)
+        Move.from_uci(move): weight
+        for move, weight in top_moves
     }
     ctx.logProbabilities(move_probs)
-    '''
-    move_probs = top_moves
+    print("random weights")
+    
     print(move_probs)
-    ctx.logProbabilities(move_probs)
-    return random.choices(legal_moves, weights=move_probs, k=1)[0]
-
+    print(move_weights)
+    return Move.from_uci(top_moves[0][0])
     #return random.choices(legal_moves, weights=move_weights, k=1)[0]
+
 
 
 @chess_manager.reset
